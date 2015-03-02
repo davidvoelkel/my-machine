@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Add git user name and email
+    copy: src=.gitconfig dest=/home/david/.gitconfig owner=david group=david
+  - name: Link .ssh directory in Windows home
+    file: src=/c/Users/david.voelkel/.ssh dest=/home/david/.ssh owner=david group=david state=link
+  - name: Install packages via apt
+    apt:  update_cache=yes cache_valid_time=3600
+    apt:  name=vim state=present
+    apt:  name=virtualbox state=present
+    apt:  name=virtualbox-dkms state=present
+    apt:  name=vagrant state=present
