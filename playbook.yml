@@ -3,8 +3,10 @@
   tasks:
   - name: Add git user name and email
     copy: src=.gitconfig dest=/home/david/.gitconfig owner=david group=david
-  - name: Link .ssh directory in Windows home
-    file: src=/c/Users/david.voelkel/.ssh dest=/home/david/.ssh owner=david group=david state=link
+  - name: Link SSH-Keys to the ones in the Windows home
+    file: dest=/home/david/.ssh owner=david group=david state=directory
+    file: src=/c/Users/david.voelkel/.ssh/id_rsa dest=/home/david/.ssh/id_rsa owner=david group=david state=link
+    file: src=/c/Users/david.voelkel/.ssh/id_rsa.pub dest=/home/david/.ssh/id_rsa.pub owner=david group=david state=link
   - name: Install packages via apt
     apt:  update_cache=yes cache_valid_time=3600
     apt:  name=vim state=present
