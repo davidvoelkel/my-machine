@@ -11,15 +11,18 @@
     file: dest={{ home }}/.ssh owner=david group=david state=directory
     file: src={{ windows_home }}/.ssh/id_rsa dest={{ home }}/.ssh/id_rsa owner=david group=david state=link
     file: src={{ windows_home }}/.ssh/id_rsa.pub dest={{ home }}/.ssh/id_rsa.pub owner=david group=david state=link
-  - name: Install packages via apt
+  - name: Install Virtualbox packages via apt
     apt:  update_cache=yes cache_valid_time=3600
-    apt:  name=vim state=present
     apt:  name=virtualbox state=present
     apt:  name=virtualbox-dkms state=present
-    apt:  name=xclip state=present
   - name: Download Vagrant from remote deb package
     get_url: url=https://dl.bintray.com/mitchellh/vagrant/vagrant_{{ vagrant_version }}_x86_64.deb dest=/tmp/vagrant.deb
   - name: Install Vagrant from downloaded deb package
     apt:  deb=/tmp/vagrant.deb 
   - name: .bashrc 
     copy: src=.bashrc dest={{ home }}/.bashrc owner=david group=david
+  - name: Install desktop tool packages via apt
+    apt:  name=vim state=present
+    apt:  name=xclip state=present
+    apt:  name=chromium-browser state=present
+    apt:  name=keepass2 state=present
