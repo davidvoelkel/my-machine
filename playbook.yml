@@ -1,16 +1,17 @@
 ---
 - hosts: localhost
   vars:
-    home: /home/david 
+    user: david
+    home: /home/{{ user }} 
     windows_home: /c/Users/david.voelkel
     vagrant_version: 1.7.1
   tasks:
   - name: Add git user name and email
-    copy: src=.gitconfig dest={{ home }}/.gitconfig owner=david group=david
+    copy: src=.gitconfig dest={{ home }}/.gitconfig owner={{ user }} group={{ user }}
   - name: Link SSH-Keys to the ones in the Windows home
-    file: dest={{ home }}/.ssh owner=david group=david state=directory
-    file: src={{ windows_home }}/.ssh/id_rsa dest={{ home }}/.ssh/id_rsa owner=david group=david state=link
-    file: src={{ windows_home }}/.ssh/id_rsa.pub dest={{ home }}/.ssh/id_rsa.pub owner=david group=david state=link
+    file: dest={{ home }}/.ssh owner={{ user }} group={{ user }} state=directory
+    file: src={{ windows_home }}/.ssh/id_rsa dest={{ home }}/.ssh/id_rsa owner={{ user }} group={{ user }} state=link
+    file: src={{ windows_home }}/.ssh/id_rsa.pub dest={{ home }}/.ssh/id_rsa.pub owner={{ user }} group={{ user }} state=link
   - name: Install Virtualbox packages via apt
     apt:  update_cache=yes cache_valid_time=3600
     apt:  name=virtualbox state=present
@@ -19,10 +20,19 @@
     get_url: url=https://dl.bintray.com/mitchellh/vagrant/vagrant_{{ vagrant_version }}_x86_64.deb dest=/tmp/vagrant.deb
   - name: Install Vagrant from downloaded deb package
     apt:  deb=/tmp/vagrant.deb 
-  - name: .bashrc 
-    copy: src=.bashrc dest={{ home }}/.bashrc owner=david group=david
+  - name: alias for xclip in .bashrc 
+    copy: src=.bashrc dest={{ home }}/.bashrc owner={{ user }} group={{ user }}
   - name: Install desktop tool packages via apt
     apt:  name=vim state=present
     apt:  name=xclip state=present
     apt:  name=chromium-browser state=present
     apt:  name=keepass2 state=present
+    apt:  name=freemind state=present
+  - name: Keepass config
+    copy: src=KeePass.config.xml dest={{ home }}/.config/KeePass/ owner={{ user }} group={{ user }}
+  - name: Add Spotify apt repo 
+    apt_repository: repo='deb http://repository.spotify.com stable non-free' state=present
+  - name: Add Spotify keyserver
+    apt_key: keyserver=keyserver.ubuntu.com id=94558F59
+  - name: Install Spotify Client
+    apt:  name=spotify-client state=present update_cache=yes 
